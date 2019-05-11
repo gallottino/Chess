@@ -12,11 +12,9 @@ Chess::Piece::Piece(sf::Texture texture,int pos_x, int pos_y,Chess::TYPE_PIECE t
     this->type_piece = type_piece;
     this->chessboard_pos_x = (pos_x - CHESSBOARD_ORIGIN_X)/ BOX_SIZE;
     this->chessboard_pos_y = (pos_y - CHESSBOARD_ORIGIN_Y)/ BOX_SIZE;
-
-
     sprite.setTexture(this->texture);
     sprite.setPosition(pos_x,pos_y);
-    sprite.scale(0.35,0.35 );
+    sprite.scale(0.50,0.50 );
 }
 
 void Chess::Piece::draw(sf::RenderWindow* window)
