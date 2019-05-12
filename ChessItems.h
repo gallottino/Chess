@@ -36,13 +36,14 @@ namespace Chess{
 class Chess::Piece{
 
 public:
-    Piece(sf::Texture texture, int pos_x, int pos_y, Chess::TYPE_PIECE type_piece,
+    Piece(sf::Texture texture, int pos_i, int pos_j, Chess::TYPE_PIECE type_piece,
           Chess::ChessBoard* chessBoard,Chess::COLOR_PIECE);
     void draw(sf::RenderWindow* window);
     void update(const sf::RenderWindow &window);
     void move(float x, float y);
     TYPE_PIECE getTypePiece();
-    void setChessBoardPosition(int chessboard_pos_i, int chessboard_pos_j);
+    bool checkMove(int new_pos_i, int new_pos_j);
+
 
 private:
     sf::Texture texture;
@@ -50,9 +51,9 @@ private:
     Chess::TYPE_PIECE type_piece;
     Chess::COLOR_PIECE color_piece;
     Chess::ChessBoard* chessBoard;
+
     int chessboard_pos_i, chessboard_pos_j;
 
-    bool checkMove(int new_pos_x, int new_pos_y);
 
 
 };
@@ -61,12 +62,9 @@ class Chess::ChessBoard{
 
 public:
     ChessBoard();
-
     void update(const sf::RenderWindow &window);
-
     void draw(sf::RenderWindow *pWindow);
-
-    void setSelected(bool value){selected = value;}
+    Chess::Piece* getPiece(int i, int j);
 
 private:
     Piece* board[8][8];

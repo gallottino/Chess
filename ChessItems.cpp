@@ -6,16 +6,15 @@
 #include "ChessItems.h"
 
 // CHESS::PIECE CLASS
-Chess::Piece::Piece(sf::Texture texture, int pos_x, int pos_y, Chess::TYPE_PIECE type_piece,
+Chess::Piece::Piece(sf::Texture texture, int pos_i, int pos_j, Chess::TYPE_PIECE type_piece,
                     Chess::ChessBoard* chessBoard, Chess::COLOR_PIECE color_piece) {
     this->texture = texture;
     this->type_piece = type_piece;
-    this->chessboard_pos_i = pos_x;
-    this->chessboard_pos_j = pos_y;
+    this->chessboard_pos_i = pos_i;
+    this->chessboard_pos_j = pos_j;
     this->color_piece = color_piece;
     sprite.setTexture(this->texture);
-    sprite.setPosition((pos_x * BOX_SIZE) + CHESSBOARD_ORIGIN_X ,(pos_y * BOX_SIZE) + CHESSBOARD_ORIGIN_Y);
-    sprite.scale(0.35,0.35);
+    sprite.setPosition((pos_j * BOX_SIZE) + CHESSBOARD_ORIGIN_X ,(pos_i * BOX_SIZE) + CHESSBOARD_ORIGIN_Y);
     this->chessBoard = chessBoard;
 }
 
@@ -32,15 +31,39 @@ void Chess::Piece::update(const sf::RenderWindow &window)
 bool Chess::Piece::checkMove(int new_pos_i, int new_pos_j)
 {
     switch(type_piece){
+
         case PAWN:
-            if(new_pos_i == chessboard_pos_i + 1) return true;
-            if(chessboard_pos_i ==  6 && new_pos_i == chessboard_pos_i + 2) return true;
+            if(color_piece == Chess::COLOR_PIECE::WHITE) {
+                if (new_pos_i == chessboard_pos_i - 1
+                    && ( new_pos_j == chessboard_pos_j - 1
+                        || new_pos_j == chessboard_pos_j + 1)
+                    && chessBoard->getPiece(new_pos_i,new_pos_j) != NULL) return true;
+
+                if (new_pos_i == chessboard_pos_i - 1
+                        && new_pos_j == chessboard_pos_j) return true;
+
+                if (chessboard_pos_i == 6
+                        && new_pos_i == chessboard_pos_i - 2
+                        && new_pos_j == chessboard_pos_j) return true;
+            }
+            else{
+                if (new_pos_i == chessboard_pos_i + 1) return true;
+
+                if (new_pos_i == chessboard_pos_i + 1
+                    && ( new_pos_j == chessboard_pos_j - 1
+                        || new_pos_j == chessboard_pos_j + 1)
+                    && chessBoard->getPiece(new_pos_i,new_pos_j ) != NULL) return true;
+
+                if (chessboard_pos_i == 1
+                    && new_pos_i == chessboard_pos_i + 2) return true;
+            }
             break;
+
+            //TODO: ADD KING, QUEEN, TOWER, HORSE, BISHOP
     }
 
     return false;
 }
-
 
 Chess::TYPE_PIECE Chess::Piece::getTypePiece(){
     return type_piece;
@@ -57,20 +80,39 @@ void Chess::Piece::move(float x, float y)
 
 Chess::ChessBoard::ChessBoard() {
 
-    sf::Texture pawn_texture;
-    pawn_texture.loadFromFile("../horse.png");
+    sf::Texture tower_black;
+    sf::Texture tower_white;
+    sf::Texture horse_black;
+    sf::Texture horse_white;
+
+    tower_black.loadFromFile("../images/torre_black.png");
+    tower_white.loadFromFile("../images/torre.png");
+    horse_black.loadFromFile("../images/horse_black.png");
+    horse_white.loadFromFile("../images/horse_white.png");
 
     selected_i = 1;
     selected_j = 1;
     selected = false;
+
     for(int i = 0; i < 8 ; i++){
         for(int j=0; j < 8; j++)
-            board[i][j] = new Piece(pawn_texture,j,i,Chess::TYPE_PIECE::PAWN,this,BLACK);
+            board[i][j] = NULL;
     }
 
-    board[3][6] = NULL;
+    for(int i = 0 ; i< 8 ; i++)
+        board[1][i] = new Piece(tower_black,1,i,Chess::TYPE_PIECE::PAWN,this,BLACK);
+
+    board[0][1] = new Piece(horse_black,0,1,Chess::TYPE_PIECE::HORSE,this,BLACK);
+    board[0][6] = new Piece(horse_black,0,6,Chess::TYPE_PIECE::HORSE,this,BLACK);
+    board[7][1] = new Piece(horse_white,7,1,Chess::TYPE_PIECE::HORSE,this,WHITE);
+    board[7][6] = new Piece(horse_white,7,6,Chess::TYPE_PIECE::HORSE,this,WHITE);
+
+    for(int i = 0 ; i< 8 ; i++)
+        board[6][i] = new Piece(tower_white,6,i,Chess::TYPE_PIECE::PAWN,this,WHITE);
+
 }
 
+Chess::Piece* Chess::ChessBoard::getPiece(int i, int j){ return board[i][j];}
 
 void Chess::ChessBoard::update(const sf::RenderWindow &window) {
 
@@ -81,21 +123,25 @@ void Chess::ChessBoard::update(const sf::RenderWindow &window) {
         && sf::Mouse::getPosition(window).y <= CHESSBOARD_ORIGIN_Y + CHESSBOARD_SIZE){
         selected_i =(int) ( CHESSBOARD_ORIGIN_Y - sf::Mouse::getPosition(window).y ) / BOX_SIZE * (-1);
         selected_j =(int) ( CHESSBOARD_ORIGIN_X - sf::Mouse::getPosition(window).x ) / BOX_SIZE * (-1);
-        selected = true;
+        if(board[selected_i][selected_j] != NULL)
+            selected = true;
     }
     else if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && selected){
         board[selected_i][selected_j]->update(window);
     }
     else{
         if(selected){
-
             int now_i =(int) ( CHESSBOARD_ORIGIN_Y - sf::Mouse::getPosition(window).y ) / BOX_SIZE * (-1);
             int now_j =(int) ( CHESSBOARD_ORIGIN_X - sf::Mouse::getPosition(window).x ) / BOX_SIZE * (-1); ;
-            if(board[now_i][now_j] == NULL){
+            if(board[selected_i][selected_j]->checkMove(now_i,now_j)){
                 Piece* tmp = board[selected_i][selected_j];
                 board[selected_i][selected_j] = NULL;
                 tmp->move( (now_j * BOX_SIZE) + CHESSBOARD_ORIGIN_X , (now_i * BOX_SIZE) + CHESSBOARD_ORIGIN_Y );
+                if(board[now_i][now_j] != NULL){
+                    delete(board[now_i][now_j]);
+                }
                 board[now_i][now_j] = tmp;
+
             }
             else{
                 board[selected_i][selected_j]->move((selected_j * BOX_SIZE) + CHESSBOARD_ORIGIN_X ,

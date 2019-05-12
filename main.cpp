@@ -9,9 +9,8 @@ int main() {
     sf::Texture text,chessboard_texture;
     Chess::ChessBoard chessBoard;
 
-    text.loadFromFile("../horse.png");
+
     chessboard_texture.loadFromFile("../chessboard.png");
-    Chess::Piece horse(text, CHESSBOARD_ORIGIN_X, CHESSBOARD_ORIGIN_Y, Chess::HORSE, &chessBoard,Chess::WHITE);
     chessboard.setPosition(CHESSBOARD_ORIGIN_X,CHESSBOARD_ORIGIN_Y);
     chessboard.setTexture(chessboard_texture);
     chessboard.scale(2,2);
