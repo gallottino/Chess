@@ -8,7 +8,7 @@
 #include <SFML/Graphics.hpp>
 
 #define CHESSBOARD_SIZE 512
-#define BOX_SIZE 32
+#define BOX_SIZE 64
 
 #define WINDOW_WIDHT 1000
 #define WINDOW_HEIGHT 612
@@ -27,35 +27,51 @@ namespace Chess{
         KING,
         PAWN
     };
+    enum COLOR_PIECE{
+        BLACK,
+        WHITE
+    };
 }
 
 class Chess::Piece{
 
 public:
-    Piece(sf::Texture texture,int pos_x, int pos_y,Chess::TYPE_PIECE type_piece);
+    Piece(sf::Texture texture, int pos_x, int pos_y, Chess::TYPE_PIECE type_piece,
+          Chess::ChessBoard* chessBoard,Chess::COLOR_PIECE);
     void draw(sf::RenderWindow* window);
     void update(const sf::RenderWindow &window);
-
-    TYPE_PIECE getTypePiece() const;
-
-    int getChessboardPosX() const;
-
-    int getChessboardPosY() const;
+    void move(float x, float y);
+    TYPE_PIECE getTypePiece();
+    void setChessBoardPosition(int chessboard_pos_i, int chessboard_pos_j);
 
 private:
     sf::Texture texture;
     sf::Sprite sprite;
     Chess::TYPE_PIECE type_piece;
-    int chessboard_pos_x, chessboard_pos_y;
+    Chess::COLOR_PIECE color_piece;
+    Chess::ChessBoard* chessBoard;
+    int chessboard_pos_i, chessboard_pos_j;
 
     bool checkMove(int new_pos_x, int new_pos_y);
+
+
 };
 
 class Chess::ChessBoard{
 
 public:
+    ChessBoard();
+
+    void update(const sf::RenderWindow &window);
+
+    void draw(sf::RenderWindow *pWindow);
+
+    void setSelected(bool value){selected = value;}
 
 private:
+    Piece* board[8][8];
+    int selected_i,selected_j;
+    bool selected = false;
 
 };
 
