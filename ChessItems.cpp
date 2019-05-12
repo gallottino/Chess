@@ -40,22 +40,29 @@ bool Chess::Piece::checkMove(int new_pos_i, int new_pos_j)
                     && chessBoard->getPiece(new_pos_i,new_pos_j) != NULL) return true;
 
                 if (new_pos_i == chessboard_pos_i - 1
-                        && new_pos_j == chessboard_pos_j) return true;
+                    && new_pos_j == chessboard_pos_j
+                    && chessBoard->getPiece(new_pos_i,new_pos_j) == NULL) return true;
 
                 if (chessboard_pos_i == 6
-                        && new_pos_i == chessboard_pos_i - 2
-                        && new_pos_j == chessboard_pos_j) return true;
+                    && new_pos_i == chessboard_pos_i - 2
+                    && new_pos_j == chessboard_pos_j
+                   && chessBoard->getPiece(new_pos_i,new_pos_j) == NULL) return true;
             }
             else{
-                if (new_pos_i == chessboard_pos_i + 1) return true;
-
                 if (new_pos_i == chessboard_pos_i + 1
                     && ( new_pos_j == chessboard_pos_j - 1
-                        || new_pos_j == chessboard_pos_j + 1)
+                         || new_pos_j == chessboard_pos_j + 1)
                     && chessBoard->getPiece(new_pos_i,new_pos_j ) != NULL) return true;
 
+                if (new_pos_i == chessboard_pos_i + 1
+                    && new_pos_j == chessboard_pos_j
+                    && chessBoard->getPiece(new_pos_i,new_pos_j) == NULL )return true;
+
+
                 if (chessboard_pos_i == 1
-                    && new_pos_i == chessboard_pos_i + 2) return true;
+                    && new_pos_i == chessboard_pos_i + 2
+                    && new_pos_j == chessboard_pos_j
+                    && chessBoard->getPiece(new_pos_i,new_pos_j) == NULL) return true;
             }
             break;
 
@@ -84,11 +91,20 @@ Chess::ChessBoard::ChessBoard() {
     sf::Texture tower_white;
     sf::Texture horse_black;
     sf::Texture horse_white;
+    sf::Texture pawn_white;
+    sf::Texture pawn_black;
+    sf::Texture bishop_white;
+    sf::Texture bishop_black;
 
     tower_black.loadFromFile("../images/torre_black.png");
     tower_white.loadFromFile("../images/torre.png");
     horse_black.loadFromFile("../images/horse_black.png");
     horse_white.loadFromFile("../images/horse_white.png");
+    pawn_black.loadFromFile("../images/pawn_black.png");
+    pawn_white.loadFromFile("../images/pawn_white.png");
+    bishop_black.loadFromFile("../images/bishop_black.png");
+    bishop_white.loadFromFile("../images/bishop_white.png");
+
 
     selected_i = 1;
     selected_j = 1;
@@ -100,15 +116,22 @@ Chess::ChessBoard::ChessBoard() {
     }
 
     for(int i = 0 ; i< 8 ; i++)
-        board[1][i] = new Piece(tower_black,1,i,Chess::TYPE_PIECE::PAWN,this,BLACK);
+        board[1][i] = new Piece(pawn_black,1,i,Chess::TYPE_PIECE::PAWN,this,BLACK);
 
     board[0][1] = new Piece(horse_black,0,1,Chess::TYPE_PIECE::HORSE,this,BLACK);
     board[0][6] = new Piece(horse_black,0,6,Chess::TYPE_PIECE::HORSE,this,BLACK);
-    board[7][1] = new Piece(horse_white,7,1,Chess::TYPE_PIECE::HORSE,this,WHITE);
-    board[7][6] = new Piece(horse_white,7,6,Chess::TYPE_PIECE::HORSE,this,WHITE);
+    board[0][5] = new Piece(bishop_black,0,5,Chess::TYPE_PIECE::BISHOP,this,BLACK);
+    board[0][2] = new Piece(bishop_black,0,2,Chess::TYPE_PIECE::BISHOP,this,BLACK);
+
+
+
 
     for(int i = 0 ; i< 8 ; i++)
-        board[6][i] = new Piece(tower_white,6,i,Chess::TYPE_PIECE::PAWN,this,WHITE);
+        board[6][i] = new Piece(pawn_white,6,i,Chess::TYPE_PIECE::PAWN,this,WHITE);
+    board[7][1] = new Piece(horse_white,7,1,Chess::TYPE_PIECE::HORSE,this,WHITE);
+    board[7][6] = new Piece(horse_white,7,6,Chess::TYPE_PIECE::HORSE,this,WHITE);
+    board[7][5] = new Piece(bishop_white,7,5,Chess::TYPE_PIECE::BISHOP,this,WHITE);
+    board[7][2] = new Piece(bishop_white,7,2,Chess::TYPE_PIECE::BISHOP,this,WHITE);
 
 }
 
