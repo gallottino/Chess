@@ -18,6 +18,7 @@
 
 namespace Chess{
     class Piece;
+    class Horse;
     class ChessBoard;
     enum TYPE_PIECE{
         TOWER,
@@ -41,9 +42,7 @@ public:
     void draw(sf::RenderWindow* window);
     void update(const sf::RenderWindow &window);
     void move(float x, float y);
-    TYPE_PIECE getTypePiece();
     bool checkMove(int new_pos_i, int new_pos_j);
-
 
 private:
     sf::Texture texture;
@@ -53,9 +52,6 @@ private:
     Chess::ChessBoard* chessBoard;
 
     int chessboard_pos_i, chessboard_pos_j;
-
-
-
 };
 
 class Chess::ChessBoard{
@@ -70,7 +66,6 @@ private:
     Piece* board[8][8];
     int selected_i,selected_j;
     bool selected = false;
-
 };
 
 

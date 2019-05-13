@@ -1,6 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include "ChessItems.h"
+#include "../include/ChessItems.h"
 
 
 int main() {
@@ -26,7 +26,7 @@ int main() {
             chessBoard.update(window);
         }
 
-        window.clear(sf::Color::White);
+        window.clear();
         window.draw(chessboard);
 
         chessBoard.draw(&window);

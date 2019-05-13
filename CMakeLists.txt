@@ -1,9 +1,15 @@
 cmake_minimum_required(VERSION 3.14)
 project(Chess)
 
-
 set(CMAKE_CXX_STANDARD 14)
-set(SOURCE_FILES main.cpp ChessItems.cpp ChessItems.h)
+
+set(SOURCE_FILES
+        src/main.cpp
+        src/ChessItems.cpp )
+
+set(HEADER_FILES
+        include/ChessItems.h)
+
 set(SFML_DIR "C:/SFML-2.5.1/lib/cmake/SFML")
 set(SFML_INCLUDE_DIR "C:/SFML-2.5.1/include/")
 link_directories("C:/SFML-2.5.1/lib/")
