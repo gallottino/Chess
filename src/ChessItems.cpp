@@ -30,6 +30,7 @@ void Chess::Piece::update(const sf::RenderWindow &window)
 
 bool Chess::Piece::checkMove(int new_pos_i, int new_pos_j)
 {
+    int change = 1;
     switch(type_piece){
             case PAWN:
                 if (color_piece == Chess::COLOR_PIECE::WHITE) {
@@ -61,7 +62,6 @@ bool Chess::Piece::checkMove(int new_pos_i, int new_pos_j)
                         && chessBoard->getPiece(new_pos_i, new_pos_j) == NULL)
                         return true;
 
-
                     if (chessboard_pos_i == 1
                         && new_pos_i == chessboard_pos_i + 2
                         && new_pos_j == chessboard_pos_j
@@ -90,42 +90,85 @@ bool Chess::Piece::checkMove(int new_pos_i, int new_pos_j)
             break;
 
         case BISHOP:
-            if( abs(chessboard_pos_i - new_pos_i) == abs(chessboard_pos_j - new_pos_j) ) {
-                int j = chessboard_pos_j;
-                if (new_pos_i > chessboard_pos_i) {
-                    if (new_pos_j > chessboard_pos_j) {
-                        for( int i = chessboard_pos_i + 1; i < new_pos_i ; i++) {
-                            j++;
-                            if (chessBoard->getPiece(i, j) != NULL) return false;
-                        }
-                    }
-                    else{
-                        for( int i = chessboard_pos_i + 1; i < new_pos_i; i++){
-                            j--;
-                            if(chessBoard->getPiece(i,j) != NULL) return false;
-                        }
-                    }
-                }else {
+            return checkBishop(new_pos_i,new_pos_j);
 
-                    if (new_pos_j > chessboard_pos_j) {
-                        for( int i = chessboard_pos_i - 1; i > new_pos_i; i--){
-                            j--;
-                            if(chessBoard->getPiece(i,j) != NULL) return false;
-                        }
-                    } else {
-                        for( int i = chessboard_pos_i - 1; i > new_pos_i; i--){
-                            j--;
-                            if(chessBoard->getPiece(i,j) != NULL) return false;
-                        }
-                    }
-                }
-                return true;
+        case TOWER:
+            return checkTower(new_pos_i,new_pos_j);
+
+        case KING:
+            if( abs(new_pos_i - chessboard_pos_i) <= 1
+                && abs(new_pos_j - chessboard_pos_j) <=1) return true;
+            return  false;
+
+        case QUEEN:
+            // Tower moving
+            if((new_pos_i == chessboard_pos_i && new_pos_j != chessboard_pos_j)
+                || (new_pos_i != chessboard_pos_i && new_pos_j == chessboard_pos_j)){
+                return checkTower(new_pos_i, new_pos_j);
             }
-            break;
+            // Bishop moving
+            if( abs(chessboard_pos_i - new_pos_i) == abs(chessboard_pos_j - new_pos_j) )
+                return checkBishop(new_pos_i,new_pos_j);
 
-            //TODO: ADD KING, QUEEN, TOWER
+            return false;
+
+            //TODO: ADD QUEEN
     }
 
+    return false;
+}
+
+bool Chess::Piece::checkBishop(int new_pos_i, int new_pos_j){
+    if( abs(chessboard_pos_i - new_pos_i) == abs(chessboard_pos_j - new_pos_j) ) {
+        int j = chessboard_pos_j;
+        if (new_pos_i > chessboard_pos_i) {
+            if (new_pos_j > chessboard_pos_j) {
+                for( int i = chessboard_pos_i + 1; i < new_pos_i ; i++) {
+                    j++;
+                    if (chessBoard->getPiece(i,j) != NULL) return false;
+                }
+            }
+            else{
+                for( int i = chessboard_pos_i + 1; i < new_pos_i; i++){
+                    j--;
+                    if(chessBoard->getPiece(i,j) != NULL) return false;
+                }
+            }
+        }else {
+            if (new_pos_j > chessboard_pos_j) {
+                for( int i = chessboard_pos_i - 1; i > new_pos_i; i--){
+                    j++;
+                    if(chessBoard->getPiece(i,j) != NULL) return false;
+                }
+            } else {
+                for( int i = chessboard_pos_i - 1; i > new_pos_i; i--){
+                    j--;
+                    if(chessBoard->getPiece(i,j) != NULL) return false;
+                }
+            }
+        }
+        return true;
+    }
+    return false;
+
+}
+
+bool Chess::Piece::checkTower(int new_pos_i, int new_pos_j){
+    int change = 1;
+    if(new_pos_i == chessboard_pos_i && new_pos_j != chessboard_pos_j){
+        if(new_pos_j < chessboard_pos_j) change = -1;
+        for(int j = chessboard_pos_j + change; j * change < new_pos_j * change;j+=change)
+            if(chessBoard->getPiece(chessboard_pos_i,j)!= NULL) return false;
+
+        return true;
+    }
+    else if(new_pos_i != chessboard_pos_i && new_pos_j == chessboard_pos_j){
+        if(new_pos_i < chessboard_pos_i) change = -1;
+        for(int i = chessboard_pos_i + change; i * change < new_pos_i * change;i+=change)
+            if(chessBoard->getPiece(i,chessboard_pos_j)!= NULL) return false;
+
+        return true;
+    }
     return false;
 }
 

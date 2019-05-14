@@ -52,6 +52,10 @@ private:
     Chess::ChessBoard* chessBoard;
 
     int chessboard_pos_i, chessboard_pos_j;
+
+    bool checkBishop(int new_pos_i, int new_pos_j);
+
+    bool checkTower(int new_pos_i, int new_pos_j);
 };
 
 class Chess::ChessBoard{
