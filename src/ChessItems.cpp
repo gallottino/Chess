@@ -23,71 +23,23 @@ void Chess::Piece::draw(sf::RenderWindow* window)
 
 void Chess::Piece::update(const sf::RenderWindow &window)
 {
-        //std::cout << this->chessboard_pos_y<< " and "<< this->chessboard_pos_x << std::endl;
         sprite.setPosition(sf::Mouse::getPosition(window).x - (sprite.getTextureRect().width/2 * sprite.getScale().x)
                 ,sf::Mouse::getPosition(window).y - (sprite.getTextureRect().height/2 * sprite.getScale().x));
 }
 
 bool Chess::Piece::checkMove(int new_pos_i, int new_pos_j)
 {
-    int change = 1;
+    Chess::ChessBoard tmp = *chessBoard;
+    if(chessBoard->getPiece(new_pos_i,new_pos_j) != NULL)
+        if (chessBoard->getPiece(new_pos_i,new_pos_j)->getColor() == this->getColor())
+            return false;
+
     switch(type_piece){
-            case PAWN:
-                if (color_piece == Chess::COLOR_PIECE::WHITE) {
-                    if (new_pos_i == chessboard_pos_i - 1
-                        && (new_pos_j == chessboard_pos_j - 1
-                            || new_pos_j == chessboard_pos_j + 1)
-                        && chessBoard->getPiece(new_pos_i, new_pos_j) != NULL)
-                        return true;
-
-                    if (new_pos_i == chessboard_pos_i - 1
-                        && new_pos_j == chessboard_pos_j
-                        && chessBoard->getPiece(new_pos_i, new_pos_j) == NULL)
-                        return true;
-
-                    if (chessboard_pos_i == 6
-                        && new_pos_i == chessboard_pos_i - 2
-                        && new_pos_j == chessboard_pos_j
-                        && chessBoard->getPiece(new_pos_i, new_pos_j) == NULL)
-                        return true;
-                } else {
-                    if (new_pos_i == chessboard_pos_i + 1
-                        && (new_pos_j == chessboard_pos_j - 1
-                            || new_pos_j == chessboard_pos_j + 1)
-                        && chessBoard->getPiece(new_pos_i, new_pos_j) != NULL)
-                        return true;
-
-                    if (new_pos_i == chessboard_pos_i + 1
-                        && new_pos_j == chessboard_pos_j
-                        && chessBoard->getPiece(new_pos_i, new_pos_j) == NULL)
-                        return true;
-
-                    if (chessboard_pos_i == 1
-                        && new_pos_i == chessboard_pos_i + 2
-                        && new_pos_j == chessboard_pos_j
-                        && chessBoard->getPiece(new_pos_i, new_pos_j) == NULL)
-                        return true;
-            break;
-        }
+        case PAWN:
+            return checkPawn(new_pos_i,new_pos_j);
 
         case HORSE:
-            if(new_pos_i == chessboard_pos_i + 2
-                && (new_pos_j == chessboard_pos_j - 1
-                    || new_pos_j == chessboard_pos_j + 1)) return true;
-
-            if(new_pos_i == chessboard_pos_i - 2
-               && (new_pos_j == chessboard_pos_j - 1
-                   || new_pos_j == chessboard_pos_j + 1)) return true;
-
-            if(new_pos_i == chessboard_pos_i + 1
-               && (new_pos_j == chessboard_pos_j - 2
-                    || new_pos_j == chessboard_pos_j + 2 )) return true;
-
-            if(new_pos_i == chessboard_pos_i - 1
-               && (new_pos_j == chessboard_pos_j - 2
-                   || new_pos_j == chessboard_pos_j + 2 )) return true;
-
-            break;
+            return checkHorse(new_pos_i,new_pos_j);
 
         case BISHOP:
             return checkBishop(new_pos_i,new_pos_j);
@@ -111,14 +63,73 @@ bool Chess::Piece::checkMove(int new_pos_i, int new_pos_j)
                 return checkBishop(new_pos_i,new_pos_j);
 
             return false;
-
-            //TODO: ADD QUEEN
     }
+    return false;
+}
+
+bool Chess::Piece::checkHorse(int new_pos_i,int new_pos_j)
+{
+    if(new_pos_i == chessboard_pos_i + 2
+       && (new_pos_j == chessboard_pos_j - 1
+           || new_pos_j == chessboard_pos_j + 1)) return true;
+
+    if(new_pos_i == chessboard_pos_i - 2
+       && (new_pos_j == chessboard_pos_j - 1
+           || new_pos_j == chessboard_pos_j + 1)) return true;
+
+    if(new_pos_i == chessboard_pos_i + 1
+       && (new_pos_j == chessboard_pos_j - 2
+           || new_pos_j == chessboard_pos_j + 2 )) return true;
+
+    if(new_pos_i == chessboard_pos_i - 1
+       && (new_pos_j == chessboard_pos_j - 2
+           || new_pos_j == chessboard_pos_j + 2 )) return true;
 
     return false;
 }
 
-bool Chess::Piece::checkBishop(int new_pos_i, int new_pos_j){
+bool Chess::Piece::checkPawn(int new_pos_i, int new_pos_j)
+{
+    if (color_piece == Chess::COLOR_PIECE::WHITE) {
+        if (new_pos_i == chessboard_pos_i - 1
+            && (new_pos_j == chessboard_pos_j - 1
+                || new_pos_j == chessboard_pos_j + 1)
+            && chessBoard->getPiece(new_pos_i, new_pos_j) != NULL)
+            return true;
+
+        if (new_pos_i == chessboard_pos_i - 1
+            && new_pos_j == chessboard_pos_j
+            && chessBoard->getPiece(new_pos_i, new_pos_j) == NULL)
+            return true;
+
+        if (chessboard_pos_i == 6
+            && new_pos_i == chessboard_pos_i - 2
+            && new_pos_j == chessboard_pos_j
+            && chessBoard->getPiece(new_pos_i, new_pos_j) == NULL)
+            return true;
+    } else {
+        if (new_pos_i == chessboard_pos_i + 1
+            && (new_pos_j == chessboard_pos_j - 1
+                || new_pos_j == chessboard_pos_j + 1)
+            && chessBoard->getPiece(new_pos_i, new_pos_j) != NULL)
+            return true;
+
+        if (new_pos_i == chessboard_pos_i + 1
+            && new_pos_j == chessboard_pos_j
+            && chessBoard->getPiece(new_pos_i, new_pos_j) == NULL)
+            return true;
+
+        if (chessboard_pos_i == 1
+            && new_pos_i == chessboard_pos_i + 2
+            && new_pos_j == chessboard_pos_j
+            && chessBoard->getPiece(new_pos_i, new_pos_j) == NULL)
+            return true;
+    }
+    return false;
+}
+
+bool Chess::Piece::checkBishop(int new_pos_i, int new_pos_j)
+{
     if( abs(chessboard_pos_i - new_pos_i) == abs(chessboard_pos_j - new_pos_j) ) {
         int j = chessboard_pos_j;
         if (new_pos_i > chessboard_pos_i) {
@@ -150,7 +161,6 @@ bool Chess::Piece::checkBishop(int new_pos_i, int new_pos_j){
         return true;
     }
     return false;
-
 }
 
 bool Chess::Piece::checkTower(int new_pos_i, int new_pos_j){
@@ -209,9 +219,14 @@ Chess::ChessBoard::ChessBoard() {
     queen_white.loadFromFile("../images/queen_white.png");
     queen_black.loadFromFile("../images/queen_black.png");
 
+    selected_texture.loadFromFile("../images/selector.png");
+    selected_icon.setTexture(selected_texture);
+    selected_icon.scale(2,2);
+
     selected_i = 1;
     selected_j = 1;
     selected = false;
+    turn = WHITE;
 
     // Init blank chessboard
     for(int i = 0; i < 8 ; i++){
@@ -219,7 +234,7 @@ Chess::ChessBoard::ChessBoard() {
             board[i][j] = NULL;
     }
 
-    // Init black pieces
+    //Init black pieces
     for(int i = 0 ; i< 8 ; i++)
         board[1][i] = new Piece(pawn_black,1,i,PAWN,this,BLACK);
     board[0][0] = new Piece(tower_black,0,0,TOWER,this,BLACK);
@@ -242,7 +257,6 @@ Chess::ChessBoard::ChessBoard() {
     board[7][2] = new Piece(bishop_white,7,2,BISHOP,this,WHITE);
     board[7][3] = new Piece(king_white,7,3,KING,this,WHITE);
     board[7][4] = new Piece(queen_white,7,4,QUEEN,this,WHITE);
-
 }
 
 Chess::Piece* Chess::ChessBoard::getPiece(int i, int j){ return board[i][j];}
@@ -254,10 +268,13 @@ void Chess::ChessBoard::update(const sf::RenderWindow &window) {
         && sf::Mouse::getPosition(window).x <= CHESSBOARD_ORIGIN_X + CHESSBOARD_SIZE
         && sf::Mouse::getPosition(window).y >= CHESSBOARD_ORIGIN_Y
         && sf::Mouse::getPosition(window).y <= CHESSBOARD_ORIGIN_Y + CHESSBOARD_SIZE){
-        selected_i =(int) ( CHESSBOARD_ORIGIN_Y - sf::Mouse::getPosition(window).y ) / BOX_SIZE * (-1);
-        selected_j =(int) ( CHESSBOARD_ORIGIN_X - sf::Mouse::getPosition(window).x ) / BOX_SIZE * (-1);
-        if(board[selected_i][selected_j] != NULL)
+        selected_i = (int) ( CHESSBOARD_ORIGIN_Y - sf::Mouse::getPosition(window).y ) / BOX_SIZE * (-1);
+        selected_j = (int) ( CHESSBOARD_ORIGIN_X - sf::Mouse::getPosition(window).x ) / BOX_SIZE * (-1);
+        if(board[selected_i][selected_j] != NULL
+            && board[selected_i][selected_j]->getColor() == turn) {
             selected = true;
+            findPositionReached(selected_i,selected_j);
+        }
     }
     else if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && selected){
         board[selected_i][selected_j]->update(window);
@@ -265,24 +282,52 @@ void Chess::ChessBoard::update(const sf::RenderWindow &window) {
     else{
         if(selected){
             int now_i =(int) ( CHESSBOARD_ORIGIN_Y - sf::Mouse::getPosition(window).y ) / BOX_SIZE * (-1);
-            int now_j =(int) ( CHESSBOARD_ORIGIN_X - sf::Mouse::getPosition(window).x ) / BOX_SIZE * (-1); ;
-            if(board[selected_i][selected_j]->checkMove(now_i,now_j)){
-                Piece* tmp = board[selected_i][selected_j];
-                board[selected_i][selected_j] = NULL;
-                tmp->move( (now_j * BOX_SIZE) + CHESSBOARD_ORIGIN_X , (now_i * BOX_SIZE) + CHESSBOARD_ORIGIN_Y );
-                if(board[now_i][now_j] != NULL){
-                    delete(board[now_i][now_j]);
-                }
-                board[now_i][now_j] = tmp;
+            int now_j =(int) ( CHESSBOARD_ORIGIN_X - sf::Mouse::getPosition(window).x ) / BOX_SIZE * (-1);
 
+            if(board[selected_i][selected_j]->checkMove(now_i,now_j)){
+
+                if(board[now_i][now_j] != NULL) {
+
+                    if (board[now_i][now_j]->getColor() != board[selected_i][selected_j]->getColor()) {
+                        board[selected_i][selected_j]->move((now_j * BOX_SIZE) + CHESSBOARD_ORIGIN_X,
+                                (now_i * BOX_SIZE) + CHESSBOARD_ORIGIN_Y);
+                        delete(board[now_i][now_j]);
+                        board[now_i][now_j] = board[selected_i][selected_j];
+                        board[selected_i][selected_j] = NULL;
+                        if(turn == WHITE) turn = BLACK;
+                        else turn = WHITE;
+                    } else {
+                        board[selected_i][selected_j]->move((selected_j * BOX_SIZE) + CHESSBOARD_ORIGIN_X ,
+                                                            (selected_i * BOX_SIZE) + CHESSBOARD_ORIGIN_Y );
+                    }
+                }
+                else{
+                    board[selected_i][selected_j]->move((now_j * BOX_SIZE) + CHESSBOARD_ORIGIN_X,
+                            (now_i * BOX_SIZE) + CHESSBOARD_ORIGIN_Y);
+                    board[now_i][now_j] = board[selected_i][selected_j];
+                    board[selected_i][selected_j] = NULL;
+                    if(turn == WHITE) turn = BLACK;
+                    else turn = WHITE;
+                }
             }
             else{
                 board[selected_i][selected_j]->move((selected_j * BOX_SIZE) + CHESSBOARD_ORIGIN_X ,
-                        (selected_i * BOX_SIZE) + CHESSBOARD_ORIGIN_Y );
+                          (selected_i * BOX_SIZE) + CHESSBOARD_ORIGIN_Y );
             }
-
         }
         selected = false;
+    }
+}
+
+void Chess::ChessBoard::findPositionReached(int pos_i,int pos_j)
+{
+    pos_reached.clear();
+
+    for(int i=0; i < 8 ; i++){
+        for(int j=0; j<8; j++){
+            if( board[pos_i][pos_j]->checkMove(i,j) )
+                pos_reached.push_back(std::pair<int,int>(i,j));
+        }
     }
 }
 
@@ -294,6 +339,13 @@ void Chess::ChessBoard::draw(sf::RenderWindow *pWindow) {
                 board[i][j]->draw(pWindow);
         }
     }
+
+    if(selected)
+        for(std::pair<int,int> p : pos_reached){
+            selected_icon.setPosition(p.second * BOX_SIZE + CHESSBOARD_ORIGIN_X
+                    ,p.first * BOX_SIZE + CHESSBOARD_ORIGIN_Y);
+            pWindow->draw(selected_icon);
+        }
 
     if(board[selected_i][selected_j] != NULL)
         board[selected_i][selected_j]->draw(pWindow);

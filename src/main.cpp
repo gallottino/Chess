@@ -9,7 +9,6 @@ int main() {
     sf::Texture text,chessboard_texture;
     Chess::ChessBoard chessBoard;
 
-
     chessboard_texture.loadFromFile("../chessboard.png");
     chessboard.setPosition(CHESSBOARD_ORIGIN_X,CHESSBOARD_ORIGIN_Y);
     chessboard.setTexture(chessboard_texture);
@@ -28,9 +27,7 @@ int main() {
 
         window.clear();
         window.draw(chessboard);
-
         chessBoard.draw(&window);
-
         window.display();
     }
 

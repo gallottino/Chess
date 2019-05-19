@@ -6,6 +6,9 @@
 #define CHESS_CHESSITEMS_H
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
+#include <utility>
+#include <list>
 
 #define CHESSBOARD_SIZE 512
 #define BOX_SIZE 64
@@ -18,7 +21,6 @@
 
 namespace Chess{
     class Piece;
-    class Horse;
     class ChessBoard;
     enum TYPE_PIECE{
         TOWER,
@@ -43,6 +45,7 @@ public:
     void update(const sf::RenderWindow &window);
     void move(float x, float y);
     bool checkMove(int new_pos_i, int new_pos_j);
+    COLOR_PIECE getColor(){return color_piece;}
 
 private:
     sf::Texture texture;
@@ -52,10 +55,10 @@ private:
     Chess::ChessBoard* chessBoard;
 
     int chessboard_pos_i, chessboard_pos_j;
-
     bool checkBishop(int new_pos_i, int new_pos_j);
-
     bool checkTower(int new_pos_i, int new_pos_j);
+    bool checkPawn(int new_pos_i, int new_pos_j);
+    bool checkHorse(int new_pos_i,int new_pos_j);
 };
 
 class Chess::ChessBoard{
@@ -70,6 +73,12 @@ private:
     Piece* board[8][8];
     int selected_i,selected_j;
     bool selected = false;
+    std::list<std::pair<int,int>> pos_reached;
+    sf::Texture selected_texture;
+    COLOR_PIECE turn = WHITE;
+    sf::Sprite selected_icon;
+
+    void findPositionReached(int pos_i,int pos_j);
 };
 
 
