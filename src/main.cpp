@@ -4,7 +4,7 @@
 
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDHT, WINDOW_HEIGHT), "Chess");
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Chess");
     sf::Sprite chessboard;
     sf::Texture text,chessboard_texture;
     Chess::ChessBoard chessBoard;

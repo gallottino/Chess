@@ -173,7 +173,7 @@ bool Chess::Piece::checkTower(int new_pos_i, int new_pos_j){
         return true;
     }
     else if(new_pos_i != chessboard_pos_i && new_pos_j == chessboard_pos_j){
-        if(new_pos_i < chessboard_pos_i) change = -1;
+        if(new_pos_i < chessboard_pos_i) change = - 1;
         for(int i = chessboard_pos_i + change; i * change < new_pos_i * change;i+=change)
             if(chessBoard->getPiece(i,chessboard_pos_j)!= NULL) return false;
 
