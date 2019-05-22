@@ -193,6 +193,7 @@ void Chess::Piece::move(float x, float y)
 
 Chess::ChessBoard::ChessBoard() {
 
+    sf::Texture asset;
     sf::Texture tower_black;
     sf::Texture tower_white;
     sf::Texture horse_black;
@@ -206,27 +207,51 @@ Chess::ChessBoard::ChessBoard() {
     sf::Texture queen_white;
     sf::Texture queen_black;
 
-    tower_black.loadFromFile("../images/torre_black.png");
-    tower_white.loadFromFile("../images/torre.png");
-    horse_black.loadFromFile("../images/horse_black.png");
-    horse_white.loadFromFile("../images/horse_white.png");
-    pawn_black.loadFromFile("../images/pawn_black.png");
-    pawn_white.loadFromFile("../images/pawn_white.png");
-    bishop_black.loadFromFile("../images/bishop_black.png");
-    bishop_white.loadFromFile("../images/bishop_white.png");
-    king_white.loadFromFile("../images/king_white.png");
-    king_black.loadFromFile("../images/king_black.png");
-    queen_white.loadFromFile("../images/queen_white.png");
-    queen_black.loadFromFile("../images/queen_black.png");
+    std::string path_black = "../images/chess_asset.png";
+    std::string path_white = "../images/chess_asset_white.png";
 
+    tower_black.loadFromFile(path_black,sf::IntRect(3 * BOX_SIZE, 1 * BOX_SIZE, BOX_SIZE, BOX_SIZE));
+    tower_white.loadFromFile(path_white,sf::IntRect(3 * BOX_SIZE, 1 * BOX_SIZE, BOX_SIZE, BOX_SIZE));
+    horse_black.loadFromFile(path_black,sf::IntRect(2 * BOX_SIZE, 1 * BOX_SIZE, BOX_SIZE, BOX_SIZE));
+    horse_white.loadFromFile(path_white,sf::IntRect(2 * BOX_SIZE, 1 * BOX_SIZE, BOX_SIZE, BOX_SIZE));
+    pawn_black.loadFromFile(path_black,sf::IntRect(0 * BOX_SIZE, 1 * BOX_SIZE, BOX_SIZE, BOX_SIZE));
+    pawn_white.loadFromFile(path_white,sf::IntRect(0 * BOX_SIZE, 1 * BOX_SIZE, BOX_SIZE, BOX_SIZE));
+    bishop_black.loadFromFile(path_black,sf::IntRect(1 * BOX_SIZE, 1 * BOX_SIZE, BOX_SIZE, BOX_SIZE));
+    bishop_white.loadFromFile(path_white,sf::IntRect(1 * BOX_SIZE, 1 * BOX_SIZE, BOX_SIZE, BOX_SIZE));
+    king_white.loadFromFile(path_white,sf::IntRect(2 * BOX_SIZE, 0 * BOX_SIZE, BOX_SIZE, BOX_SIZE));
+    king_black.loadFromFile(path_black,sf::IntRect(2 * BOX_SIZE, 0 * BOX_SIZE, BOX_SIZE, BOX_SIZE));
+    queen_white.loadFromFile(path_white,sf::IntRect(3 * BOX_SIZE, 0 * BOX_SIZE, BOX_SIZE, BOX_SIZE));
+    queen_black.loadFromFile(path_black,sf::IntRect(3 * BOX_SIZE, 0 * BOX_SIZE, BOX_SIZE, BOX_SIZE));
+
+
+    box_texture_black.loadFromFile(path_black,sf::IntRect(1 * BOX_SIZE, 0 * BOX_SIZE, BOX_SIZE, BOX_SIZE));
+    box_texture_white.loadFromFile(path_black,sf::IntRect(0 * BOX_SIZE, 0 * BOX_SIZE, BOX_SIZE, BOX_SIZE));
     selected_texture.loadFromFile("../images/selector.png");
     selected_icon.setTexture(selected_texture);
     selected_icon.scale(2,2);
+
 
     selected_i = 1;
     selected_j = 1;
     selected = false;
     turn = WHITE;
+
+    for(int i = 0; i < 8 ; i++){
+        for(int j=0; j < 8; j++) {
+            chessboard_sprite[i][j].setPosition(j*BOX_SIZE + CHESSBOARD_ORIGIN_X,i*BOX_SIZE + CHESSBOARD_ORIGIN_Y);
+            if(i % 2 == 0)
+                if (j % 2 == 0)
+                    chessboard_sprite[i][j].setTexture(box_texture_white);
+                else
+                    chessboard_sprite[i][j].setTexture(box_texture_black);
+            else
+                if (j % 2 != 0)
+                    chessboard_sprite[i][j].setTexture(box_texture_white);
+                else
+                    chessboard_sprite[i][j].setTexture(box_texture_black);
+
+        }
+    }
 
     // Init blank chessboard
     for(int i = 0; i < 8 ; i++){
@@ -335,6 +360,7 @@ void Chess::ChessBoard::draw(sf::RenderWindow *pWindow) {
 
     for(int i=0; i < 8 ; i++){
         for(int j=0; j<8; j++){
+            pWindow->draw(chessboard_sprite[i][j]);
             if(board[i][j]!= NULL)
                 board[i][j]->draw(pWindow);
         }

@@ -75,9 +75,10 @@ private:
     int selected_i,selected_j;
     bool selected = false;
     std::list<std::pair<int,int>> pos_reached;
-    sf::Texture selected_texture;
-    COLOR_PIECE turn = WHITE;
+    sf::Texture selected_texture,box_texture_white,box_texture_black;
     sf::Sprite selected_icon;
+    sf::Sprite chessboard_sprite[8][8];
+    COLOR_PIECE turn = WHITE;
 
     void findPositionReached(int pos_i,int pos_j);
 };
