@@ -27,6 +27,186 @@ void Chess::Piece::update(const sf::RenderWindow &window)
                 ,sf::Mouse::getPosition(window).y - (sprite.getTextureRect().height/2 * sprite.getScale().x));
 }
 
+void Chess::Piece::findMovement()
+{
+    int i,j;
+    box_checked.clear();
+    switch(type_piece){
+        case PAWN:
+            if(color_piece == WHITE){
+                if(chessBoard->getPiece(chessboard_pos_i - 1 ,chessboard_pos_j) == NULL)
+                    box_checked.push_back(std::pair<int,int>(chessboard_pos_i - 1 ,chessboard_pos_j));
+                if(chessBoard->getPiece(chessboard_pos_i - 2 ,chessboard_pos_j) == NULL
+                        && chessboard_pos_i == 6)
+                    box_checked.push_back(std::pair<int,int>(chessboard_pos_i - 2,chessboard_pos_j));
+                if(chessBoard->getPiece(chessboard_pos_i - 1 ,chessboard_pos_j - 1) != NULL
+                && chessBoard->getPiece(chessboard_pos_i - 1 ,chessboard_pos_j - 1)->getColor() != color_piece)
+                    box_checked.push_back(std::pair<int,int>(chessboard_pos_i - 1 ,chessboard_pos_j - 1));
+                if(chessBoard->getPiece(chessboard_pos_i - 1 ,chessboard_pos_j + 1) != NULL
+                && chessBoard->getPiece(chessboard_pos_i - 1 ,chessboard_pos_j + 1)->getColor() != color_piece)
+                    box_checked.push_back(std::pair<int,int>(chessboard_pos_i - 1 ,chessboard_pos_j + 1));
+            }
+            else{
+                if(chessBoard->getPiece(chessboard_pos_i + 1 ,chessboard_pos_j) == NULL)
+                    box_checked.push_back(std::pair<int,int>(chessboard_pos_i + 1 ,chessboard_pos_j));
+                if(chessBoard->getPiece(chessboard_pos_i + 2 ,chessboard_pos_j) == NULL
+                        && chessboard_pos_i == 1)
+                    box_checked.push_back(std::pair<int,int>(chessboard_pos_i + 2,chessboard_pos_j));
+                if(chessBoard->getPiece(chessboard_pos_i + 1 ,chessboard_pos_j + 1) != NULL
+                && chessBoard->getPiece(chessboard_pos_i + 1 ,chessboard_pos_j + 1)->getColor() != color_piece)
+                    box_checked.push_back(std::pair<int,int>(chessboard_pos_i + 1 ,chessboard_pos_j + 1));
+                if(chessBoard->getPiece(chessboard_pos_i + 1 ,chessboard_pos_j - 1) != NULL
+                && chessBoard->getPiece(chessboard_pos_i + 1 ,chessboard_pos_j - 1)->getColor() != color_piece)
+                    box_checked.push_back(std::pair<int,int>(chessboard_pos_i + 1 ,chessboard_pos_j - 1));
+
+            }
+            break;
+
+        case HORSE:
+            i = chessboard_pos_i-2;
+            j = chessboard_pos_j+1;
+            if(((i>=0 && j<=7)) && (chessBoard->getPiece(i,j)==NULL
+                ||( chessBoard->getPiece(i,j)!=NULL && chessBoard->getPiece(i,j)->getColor() != color_piece)))
+                box_checked.push_back(std::pair<int,int>(i,j));
+
+            i = chessboard_pos_i-2;
+            j = chessboard_pos_j-1;
+            if((i>=0 && j>=0) && (chessBoard->getPiece(i,j)==NULL
+                ||( chessBoard->getPiece(i,j)!=NULL && chessBoard->getPiece(i,j)->getColor() != color_piece)))
+                box_checked.push_back(std::pair<int,int>(i,j));
+
+            i = chessboard_pos_i-1;
+            j = chessboard_pos_j+2;
+            if((i>=0 && j<=7) && (chessBoard->getPiece(i,j)==NULL
+                ||( chessBoard->getPiece(i,j)!=NULL && chessBoard->getPiece(i,j)->getColor() != color_piece)))
+                box_checked.push_back(std::pair<int,int>(i,j));
+
+            i = chessboard_pos_i-1;
+            j = chessboard_pos_j-2;
+            if((i>=0 && j>=0) && (chessBoard->getPiece(i,j)==NULL
+                ||( chessBoard->getPiece(i,j)!=NULL && chessBoard->getPiece(i,j)->getColor() != color_piece)))
+                box_checked.push_back(std::pair<int,int>(i,j));
+
+            i = chessboard_pos_i+2;
+            j = chessboard_pos_j+1;
+            if(i<=7 && j<=7 && (chessBoard->getPiece(i,j)==NULL
+                ||( chessBoard->getPiece(i,j)!=NULL && chessBoard->getPiece(i,j)->getColor() != color_piece)))
+                box_checked.push_back(std::pair<int,int>(i,j));
+
+            i = chessboard_pos_i+2;
+            j = chessboard_pos_j-1;
+            if((i<=7 && j>=0) && (chessBoard->getPiece(i,j)==NULL
+                ||( chessBoard->getPiece(i,j)!=NULL && chessBoard->getPiece(i,j)->getColor() != color_piece)))
+                box_checked.push_back(std::pair<int,int>(i,j));
+
+            i = chessboard_pos_i+1;
+            j = chessboard_pos_j+2;
+            if((i<=7 && j<=7) && (chessBoard->getPiece(i,j)==NULL
+                ||( chessBoard->getPiece(i,j)!=NULL && chessBoard->getPiece(i,j)->getColor() != color_piece)))
+                box_checked.push_back(std::pair<int,int>(i,j));
+
+            i = chessboard_pos_i+1;
+            j = chessboard_pos_j-2;
+            if((i<=7 && j>=0) && (chessBoard->getPiece(i,j)==NULL
+                ||( chessBoard->getPiece(i,j)!=NULL && chessBoard->getPiece(i,j)->getColor() != color_piece)))
+                box_checked.push_back(std::pair<int,int>(i,j));
+            break;
+
+        case BISHOP:
+            j = chessboard_pos_j;
+            for(int i=chessboard_pos_i-1;i>=0; i--){
+                j--;
+                if(chessBoard->getPiece(i,j) != NULL){
+                    if(chessBoard->getPiece(i,j)->getColor() == color_piece)
+                        break;
+                    box_checked.push_back(std::pair<int,int>(i,j));
+                    break;
+                }
+                box_checked.push_back(std::pair<int,int>(i,j));
+            }
+            j = chessboard_pos_j;
+            for(int i=chessboard_pos_i+1;i<=7; i++){
+                j++;
+                if(chessBoard->getPiece(i,j) != NULL){
+                    if(chessBoard->getPiece(i,j)->getColor() == color_piece)
+                        break;
+                    box_checked.push_back(std::pair<int,int>(i,j));
+                    break;
+                }
+                box_checked.push_back(std::pair<int,int>(i,j));
+
+            }
+            j = chessboard_pos_j;
+            for(int i=chessboard_pos_i-1;i>=0; i--){
+                j++;
+                if(chessBoard->getPiece(i,j) != NULL){
+                    if(chessBoard->getPiece(i,j)->getColor() == color_piece)
+                        break;
+                    box_checked.push_back(std::pair<int,int>(i,j));
+                    break;
+                }
+                box_checked.push_back(std::pair<int,int>(i,j));
+
+            }
+            j = chessboard_pos_j;
+            for(int i=chessboard_pos_i+1;i<=7; i++){
+                j--;
+                if(chessBoard->getPiece(i,j) != NULL){
+                    if(chessBoard->getPiece(i,j)->getColor() == color_piece)
+                        break;
+                    box_checked.push_back(std::pair<int,int>(i,j));
+                    break;
+                }
+                box_checked.push_back(std::pair<int,int>(i,j));
+            }
+            break;
+
+        case TOWER:
+            j = chessboard_pos_j;
+            for(int i=chessboard_pos_i-1;i>=0; i--){
+                if(chessBoard->getPiece(i,j) != NULL){
+                    if(chessBoard->getPiece(i,j)->getColor() == color_piece)
+                        break;
+                    box_checked.push_back(std::pair<int,int>(i,j));
+                    break;
+                }
+                box_checked.push_back(std::pair<int,int>(i,j));
+            }
+            j = chessboard_pos_j;
+            for(int i=chessboard_pos_i+1;i<=7; i++){
+                if(chessBoard->getPiece(i,j) != NULL){
+                    if(chessBoard->getPiece(i,j)->getColor() == color_piece)
+                        break;
+                    box_checked.push_back(std::pair<int,int>(i,j));
+                    break;
+                }
+                box_checked.push_back(std::pair<int,int>(i,j));
+            }
+            i = chessboard_pos_i;
+            for(int j=chessboard_pos_j-1;j>=0; j--){
+                if(chessBoard->getPiece(i,j) != NULL){
+                    if(chessBoard->getPiece(i,j)->getColor() == color_piece)
+                        break;
+                    box_checked.push_back(std::pair<int,int>(i,j));
+                    break;
+                }
+                box_checked.push_back(std::pair<int,int>(i,j));
+            }
+            i = chessboard_pos_i;
+            for(int j=chessboard_pos_j+1;j<=7; j++){
+                if(chessBoard->getPiece(i,j) != NULL){
+                    if(chessBoard->getPiece(i,j)->getColor() == color_piece)
+                        break;
+                    box_checked.push_back(std::pair<int,int>(i,j));
+                    break;
+                }
+                box_checked.push_back(std::pair<int,int>(i,j));
+            }
+
+            break;
+    }
+}
+
 bool Chess::Piece::checkMove(int new_pos_i, int new_pos_j)
 {
     Chess::ChessBoard tmp = *chessBoard;
@@ -230,7 +410,6 @@ Chess::ChessBoard::ChessBoard() {
     selected_icon.setTexture(selected_texture);
     selected_icon.scale(2,2);
 
-
     selected_i = 1;
     selected_j = 1;
     selected = false;
@@ -298,7 +477,8 @@ void Chess::ChessBoard::update(const sf::RenderWindow &window) {
         if(board[selected_i][selected_j] != NULL
             && board[selected_i][selected_j]->getColor() == turn) {
             selected = true;
-            findPositionReached(selected_i,selected_j);
+            //findPositionReached(selected_i,selected_j);
+            board[selected_i][selected_j]->findMovement();
         }
     }
     else if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && selected){
@@ -358,6 +538,8 @@ void Chess::ChessBoard::findPositionReached(int pos_i,int pos_j)
 
 void Chess::ChessBoard::draw(sf::RenderWindow *pWindow) {
 
+
+
     for(int i=0; i < 8 ; i++){
         for(int j=0; j<8; j++){
             pWindow->draw(chessboard_sprite[i][j]);
@@ -367,10 +549,12 @@ void Chess::ChessBoard::draw(sf::RenderWindow *pWindow) {
     }
 
     if(selected)
-        for(std::pair<int,int> p : pos_reached){
-            selected_icon.setPosition(p.second * BOX_SIZE + CHESSBOARD_ORIGIN_X
-                    ,p.first * BOX_SIZE + CHESSBOARD_ORIGIN_Y);
-            pWindow->draw(selected_icon);
+        for(std::pair<int,int> p : board[selected_i][selected_j]->getMovement()){
+            if(p.first >= 0 && p.first <=7 && p.second >= 0 && p.second <=7) {
+                selected_icon.setPosition(p.second * BOX_SIZE + CHESSBOARD_ORIGIN_X,
+                                          p.first * BOX_SIZE + CHESSBOARD_ORIGIN_Y);
+                pWindow->draw(selected_icon);
+            }
         }
 
     if(board[selected_i][selected_j] != NULL)

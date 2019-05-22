@@ -46,6 +46,8 @@ public:
     void update(const sf::RenderWindow &window);
     void move(float x, float y);
     bool checkMove(int new_pos_i, int new_pos_j);
+    void findMovement();
+    std::list<std::pair<int,int>> getMovement(){return box_checked;}
     COLOR_PIECE getColor(){return color_piece;}
 
 private:
@@ -54,6 +56,7 @@ private:
     Chess::TYPE_PIECE type_piece;
     Chess::COLOR_PIECE color_piece;
     Chess::ChessBoard* chessBoard;
+    std::list<std::pair<int,int>> box_checked;
 
     int chessboard_pos_i, chessboard_pos_j;
     bool checkBishop(int new_pos_i, int new_pos_j);
@@ -82,6 +85,5 @@ private:
 
     void findPositionReached(int pos_i,int pos_j);
 };
-
 
 #endif //CHESS_CHESSITEMS_H
