@@ -5,10 +5,13 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(SOURCE_FILES
         src/main.cpp
-        src/ChessItems.cpp )
+        src/ChessItems.cpp
+        src/Animation.cpp)
 
 set(HEADER_FILES
-        include/ChessItems.h)
+        include/ChessItems.h
+        include/Animation.h
+        )
 
 set(SFML_DIR "C:/SFML-2.5.1/lib/cmake/SFML")
 set(SFML_INCLUDE_DIR "C:/SFML-2.5.1/include/")

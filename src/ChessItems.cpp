@@ -461,11 +461,14 @@ Chess::ChessBoard::ChessBoard() {
     board[7][2] = new Piece(bishop_white,7,2,BISHOP,this,WHITE);
     board[7][3] = new Piece(king_white,7,3,KING,this,WHITE);
     board[7][4] = new Piece(queen_white,7,4,QUEEN,this,WHITE);
+
 }
 
 Chess::Piece* Chess::ChessBoard::getPiece(int i, int j){ return board[i][j];}
 
 void Chess::ChessBoard::update(const sf::RenderWindow &window) {
+
+
 
     if( sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && !selected
         && sf::Mouse::getPosition(window).x >= CHESSBOARD_ORIGIN_X
@@ -477,7 +480,6 @@ void Chess::ChessBoard::update(const sf::RenderWindow &window) {
         if(board[selected_i][selected_j] != NULL
             && board[selected_i][selected_j]->getColor() == turn) {
             selected = true;
-            //findPositionReached(selected_i,selected_j);
             board[selected_i][selected_j]->findMovement();
         }
     }
@@ -493,9 +495,11 @@ void Chess::ChessBoard::update(const sf::RenderWindow &window) {
 
                 if(board[now_i][now_j] != NULL) {
 
+
                     if (board[now_i][now_j]->getColor() != board[selected_i][selected_j]->getColor()) {
                         board[selected_i][selected_j]->move((now_j * BOX_SIZE) + CHESSBOARD_ORIGIN_X,
                                 (now_i * BOX_SIZE) + CHESSBOARD_ORIGIN_Y);
+                        animation.setPosition(now_i,now_j);
                         delete(board[now_i][now_j]);
                         board[now_i][now_j] = board[selected_i][selected_j];
                         board[selected_i][selected_j] = NULL;
@@ -504,12 +508,14 @@ void Chess::ChessBoard::update(const sf::RenderWindow &window) {
                     } else {
                         board[selected_i][selected_j]->move((selected_j * BOX_SIZE) + CHESSBOARD_ORIGIN_X ,
                                                             (selected_i * BOX_SIZE) + CHESSBOARD_ORIGIN_Y );
+                        animation.setPosition(selected_i,selected_j);
                     }
                 }
                 else{
                     board[selected_i][selected_j]->move((now_j * BOX_SIZE) + CHESSBOARD_ORIGIN_X,
                             (now_i * BOX_SIZE) + CHESSBOARD_ORIGIN_Y);
                     board[now_i][now_j] = board[selected_i][selected_j];
+                    animation.setPosition(now_i,now_j);
                     board[selected_i][selected_j] = NULL;
                     if(turn == WHITE) turn = BLACK;
                     else turn = WHITE;
@@ -518,22 +524,15 @@ void Chess::ChessBoard::update(const sf::RenderWindow &window) {
             else{
                 board[selected_i][selected_j]->move((selected_j * BOX_SIZE) + CHESSBOARD_ORIGIN_X ,
                           (selected_i * BOX_SIZE) + CHESSBOARD_ORIGIN_Y );
+                animation.setPosition(selected_i,selected_j);
             }
+            animation.startAnimation();
         }
         selected = false;
     }
-}
 
-void Chess::ChessBoard::findPositionReached(int pos_i,int pos_j)
-{
-    pos_reached.clear();
+    animation.update();
 
-    for(int i=0; i < 8 ; i++){
-        for(int j=0; j<8; j++){
-            if( board[pos_i][pos_j]->checkMove(i,j) )
-                pos_reached.push_back(std::pair<int,int>(i,j));
-        }
-    }
 }
 
 void Chess::ChessBoard::draw(sf::RenderWindow *pWindow) {
@@ -559,4 +558,6 @@ void Chess::ChessBoard::draw(sf::RenderWindow *pWindow) {
 
     if(board[selected_i][selected_j] != NULL)
         board[selected_i][selected_j]->draw(pWindow);
+
+    animation.draw(pWindow);
 }

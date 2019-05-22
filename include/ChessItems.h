@@ -9,6 +9,7 @@
 #include <iostream>
 #include <utility>
 #include <list>
+#include "Animation.h"
 
 
 #define BOX_SIZE 64
@@ -82,6 +83,7 @@ private:
     sf::Sprite selected_icon;
     sf::Sprite chessboard_sprite[8][8];
     COLOR_PIECE turn = WHITE;
+    Animation animation;
 
     void findPositionReached(int pos_i,int pos_j);
 };

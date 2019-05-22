@@ -22,9 +22,9 @@ int main() {
             if (event.type == sf::Event::Closed)
                 window.close();
 
-            chessBoard.update(window);
-        }
 
+        }
+        chessBoard.update(window);
         window.clear();
         window.draw(chessboard);
         chessBoard.draw(&window);
