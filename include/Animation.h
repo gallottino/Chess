@@ -12,18 +12,24 @@
 class Animation {
 
 public:
+    enum Type{
+        EAT,
+        MOVE
+    };
+
     Animation();
-    void startAnimation();
+    void startAnimation(Type type);
     void update();
     void stopAnimation();
-    void draw(sf::RenderWindow *window);
-
+    void render(sf::RenderWindow *window);
     void setPosition(int i, int j);
 
 private:
-    sf::Texture smoke_asset[5];
-    sf::Sprite frames[5];
+
+    sf::Texture smoke_asset[5],smoke_asset_eat[5];
+    sf::Sprite frames[5],frames_eat[5];
     sf::Clock clock;
+    Type type;
 
     bool mStarted;
     int now;

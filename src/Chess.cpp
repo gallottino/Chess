@@ -89,10 +89,13 @@ void Chess::Chessboard::render(sf::RenderWindow* window)
         }
         chessboard[selected_i][selected_j]->render(window);
     }
+
+    animation.render(window);
 }
 void Chess::Chessboard::update(const sf::RenderWindow &window)
 {
 
+    animation.update();
     if( !selected && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)
         && sf::Mouse::getPosition(window).x >= CHESSBOARD_ORIGIN_X
         && sf::Mouse::getPosition(window).x <= CHESSBOARD_ORIGIN_X + CHESSBOARD_SIZE
@@ -117,14 +120,23 @@ void Chess::Chessboard::update(const sf::RenderWindow &window)
             chessboard[selected_i][selected_j]->move(now_i,now_j);
             if(chessboard[now_i][now_j] != NULL && now_i != selected_i) {
                 delete (chessboard[now_i][now_j]);
+                animation.setPosition(now_i,now_j);
+                animation.startAnimation(Animation::Type::EAT);
+            }
+            else{
+                animation.setPosition(now_i,now_j);
+                animation.startAnimation(Animation::Type::MOVE);
             }
             chessboard[now_i][now_j] = chessboard[selected_i][selected_j];
             chessboard[selected_i][selected_j] = NULL;
+
             if(turn == WHITE) turn = BLACK;
             else turn = WHITE;
         }
         else{
             //TORNA AL TUO POSTO
+            animation.setPosition(selected_i,selected_j);
+            animation.startAnimation(Animation::Type::MOVE);
             chessboard[selected_i][selected_j]->move(selected_i,selected_j);
         }
         selected = false;

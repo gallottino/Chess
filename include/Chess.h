@@ -8,6 +8,7 @@
 #include <iostream>
 #include <list>
 #include <SFML/Graphics.hpp>
+#include "Animation.h"
 
 namespace Chess {
 
@@ -49,6 +50,8 @@ namespace Chess {
 
         sf::Texture black_box,white_box,selected_texture;
         sf::Sprite chessboard_sprite[8][8],selected_icon;
+
+        Animation animation;
 
         bool selected;
         int selected_i,selected_j;
