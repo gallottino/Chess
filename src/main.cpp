@@ -1,18 +1,13 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include "../include/ChessItems.h"
+#include "../include/Chess.h"
 
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Chess");
-    sf::Sprite chessboard;
-    sf::Texture text,chessboard_texture;
-    Chess::ChessBoard chessBoard;
+    sf::RenderWindow window(sf::VideoMode(Chess::WINDOW_WIDTH, Chess::WINDOW_HEIGHT), "Chess");
 
-    chessboard_texture.loadFromFile("../chessboard.png");
-    chessboard.setPosition(CHESSBOARD_ORIGIN_X,CHESSBOARD_ORIGIN_Y);
-    chessboard.setTexture(chessboard_texture);
-    chessboard.scale(2,2);
+    sf::Texture text,chessboard_texture;
+    Chess::Chessboard chessboard;
 
     while (window.isOpen())
     {
@@ -22,12 +17,10 @@ int main() {
             if (event.type == sf::Event::Closed)
                 window.close();
 
-
         }
-        chessBoard.update(window);
+        chessboard.update(window);
         window.clear();
-        window.draw(chessboard);
-        chessBoard.draw(&window);
+        chessboard.render(&window);
         window.display();
     }
 

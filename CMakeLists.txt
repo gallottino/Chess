@@ -5,11 +5,11 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(SOURCE_FILES
         src/main.cpp
-        src/ChessItems.cpp
+        src/Chess.cpp
         src/Animation.cpp)
 
 set(HEADER_FILES
-        include/ChessItems.h
+        include/Chess.h
         include/Animation.h
         )
 

@@ -33,33 +33,7 @@ void Chess::Piece::findMovement()
     box_checked.clear();
     switch(type_piece){
         case PAWN:
-            if(color_piece == WHITE){
-                if(chessBoard->getPiece(chessboard_pos_i - 1 ,chessboard_pos_j) == NULL)
-                    box_checked.push_back(std::pair<int,int>(chessboard_pos_i - 1 ,chessboard_pos_j));
-                if(chessBoard->getPiece(chessboard_pos_i - 2 ,chessboard_pos_j) == NULL
-                        && chessboard_pos_i == 6)
-                    box_checked.push_back(std::pair<int,int>(chessboard_pos_i - 2,chessboard_pos_j));
-                if(chessBoard->getPiece(chessboard_pos_i - 1 ,chessboard_pos_j - 1) != NULL
-                && chessBoard->getPiece(chessboard_pos_i - 1 ,chessboard_pos_j - 1)->getColor() != color_piece)
-                    box_checked.push_back(std::pair<int,int>(chessboard_pos_i - 1 ,chessboard_pos_j - 1));
-                if(chessBoard->getPiece(chessboard_pos_i - 1 ,chessboard_pos_j + 1) != NULL
-                && chessBoard->getPiece(chessboard_pos_i - 1 ,chessboard_pos_j + 1)->getColor() != color_piece)
-                    box_checked.push_back(std::pair<int,int>(chessboard_pos_i - 1 ,chessboard_pos_j + 1));
-            }
-            else{
-                if(chessBoard->getPiece(chessboard_pos_i + 1 ,chessboard_pos_j) == NULL)
-                    box_checked.push_back(std::pair<int,int>(chessboard_pos_i + 1 ,chessboard_pos_j));
-                if(chessBoard->getPiece(chessboard_pos_i + 2 ,chessboard_pos_j) == NULL
-                        && chessboard_pos_i == 1)
-                    box_checked.push_back(std::pair<int,int>(chessboard_pos_i + 2,chessboard_pos_j));
-                if(chessBoard->getPiece(chessboard_pos_i + 1 ,chessboard_pos_j + 1) != NULL
-                && chessBoard->getPiece(chessboard_pos_i + 1 ,chessboard_pos_j + 1)->getColor() != color_piece)
-                    box_checked.push_back(std::pair<int,int>(chessboard_pos_i + 1 ,chessboard_pos_j + 1));
-                if(chessBoard->getPiece(chessboard_pos_i + 1 ,chessboard_pos_j - 1) != NULL
-                && chessBoard->getPiece(chessboard_pos_i + 1 ,chessboard_pos_j - 1)->getColor() != color_piece)
-                    box_checked.push_back(std::pair<int,int>(chessboard_pos_i + 1 ,chessboard_pos_j - 1));
 
-            }
             break;
 
         case HORSE:
@@ -467,8 +441,6 @@ Chess::ChessBoard::ChessBoard() {
 Chess::Piece* Chess::ChessBoard::getPiece(int i, int j){ return board[i][j];}
 
 void Chess::ChessBoard::update(const sf::RenderWindow &window) {
-
-
 
     if( sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && !selected
         && sf::Mouse::getPosition(window).x >= CHESSBOARD_ORIGIN_X
