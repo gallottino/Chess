@@ -94,7 +94,31 @@ namespace Chess {
 
     };
 
+    class Tower : public Piece {
+    public:
+        Tower(int i, int j,Chess::Color color,Chessboard* chessboard);
+        void findMovement();
+    };
 
+    class Bishop : public Piece {
+    public:
+        Bishop(int i, int j,Chess::Color color,Chessboard* chessboard);
+        void findMovement();
+    };
+
+    class King : public Piece
+    {
+    public:
+        King(int i, int j,Chess::Color color,Chessboard* chessboard);
+        void findMovement();
+    };
+
+    class Queen : public Piece
+    {
+    public:
+        Queen(int i, int j,Chess::Color color,Chessboard* chessboard);
+        void findMovement();
+    };
 }
 
 #endif //CHESS_CHESS_H

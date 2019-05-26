@@ -41,13 +41,28 @@ Chess::Chessboard::Chessboard()
     for(int i=0;i<8;i++){
         chessboard[1][i] = new Pawn(1,i,BLACK,this);
     }
+    chessboard[0][5] = new Bishop(0,5,BLACK,this);
+    chessboard[0][6] = new Knight(0,6,BLACK,this);
+    chessboard[0][7] = new Tower(0,7,BLACK,this);
+    chessboard[0][4] = new Queen(0,4,BLACK,this);
+    chessboard[0][3] = new King(0,3,BLACK,this);
+    chessboard[0][2] = new Bishop(0,2,BLACK,this);
     chessboard[0][1] = new Knight(0,1,BLACK,this);
+    chessboard[0][0] = new Tower(0,0,BLACK,this);
+
 
     // INIT CHESSBOARD WHITE
     for(int i=0;i<8;i++){
         chessboard[6][i] = new Pawn(6,i,WHITE,this);
     }
+    chessboard[7][5] = new Bishop(7,5,WHITE,this);
+    chessboard[7][6] = new Knight(7,6,WHITE,this);
+    chessboard[7][7] = new Tower(7,7,WHITE,this);
+    chessboard[7][4] = new Queen(7,4,WHITE,this);
+    chessboard[7][3] = new King(7,3,WHITE,this);
+    chessboard[7][2] = new Bishop(7,2,WHITE,this);
     chessboard[7][1] = new Knight(7,1,WHITE,this);
+    chessboard[7][0] = new Tower(7,0,WHITE,this);
 
 }
 
@@ -100,7 +115,11 @@ void Chess::Chessboard::update(const sf::RenderWindow &window)
         if(chessboard[selected_i][selected_j]->checkMove(now_i,now_j)){
             // SPOSTATI
             chessboard[selected_i][selected_j]->move(now_i,now_j);
-            
+            if(chessboard[now_i][now_j] != NULL && now_i != selected_i) {
+                delete (chessboard[now_i][now_j]);
+            }
+            chessboard[now_i][now_j] = chessboard[selected_i][selected_j];
+            chessboard[selected_i][selected_j] = NULL;
             if(turn == WHITE) turn = BLACK;
             else turn = WHITE;
         }
@@ -168,6 +187,7 @@ Chess::Pawn::Pawn(int i, int j, Chess::Color color,Chessboard* chessboard)
 
 void Chess::Pawn::findMovement()
 {
+    box_checked.clear();
     if(color == WHITE){
         if(chessBoard->getPiece(pos_i - 1 ,pos_j) == NULL)
             box_checked.push_back(std::pair<int,int>(pos_i - 1 ,pos_j));
@@ -196,7 +216,6 @@ void Chess::Pawn::findMovement()
     }
 }
 
-
 // KNIGHT CLASS
 Chess::Knight::Knight(int i, int j, Chess::Color color,Chessboard* chessboard)
 : Piece(i,j,color,chessboard)
@@ -212,6 +231,7 @@ Chess::Knight::Knight(int i, int j, Chess::Color color,Chessboard* chessboard)
 }
 
 void Chess::Knight::findMovement() {
+    box_checked.clear();
     int i = pos_i-2;
     int j = pos_j+1;
     if(((i>=0 && j<=7)) && (chessBoard->getPiece(i,j)==NULL
@@ -261,3 +281,273 @@ void Chess::Knight::findMovement() {
         box_checked.push_back(std::pair<int,int>(i,j));
 }
 
+// TOWER CLASS
+Chess::Tower::Tower(int i, int j, Chess::Color color, Chess::Chessboard *chessboard)
+:Piece(i,j,color,chessboard)
+{
+    if(color == WHITE) {
+        texture.loadFromFile("../images/chess_asset_white.png",sf::IntRect(3 * BOX_SIZE,BOX_SIZE,BOX_SIZE,BOX_SIZE));
+    }
+    else if (color == BLACK){
+        texture.loadFromFile("../images/chess_asset.png",sf::IntRect(3*BOX_SIZE,BOX_SIZE,BOX_SIZE,BOX_SIZE));
+    }
+    type = TOWER;
+    sprite.setTexture(texture);
+}
+
+void Chess::Tower::findMovement()
+{
+    box_checked.clear();
+    int j = pos_j;
+    for(int i=pos_i-1;i>=0; i--){
+        if(chessBoard->getPiece(i,j) != NULL){
+            if(chessBoard->getPiece(i,j)->getColor() == color)
+                break;
+            box_checked.push_back(std::pair<int,int>(i,j));
+            break;
+        }
+        box_checked.push_back(std::pair<int,int>(i,j));
+    }
+    j = pos_j;
+    for(int i=pos_i+1;i<=7; i++){
+        if(chessBoard->getPiece(i,j) != NULL){
+            if(chessBoard->getPiece(i,j)->getColor() == color)
+                break;
+            box_checked.push_back(std::pair<int,int>(i,j));
+            break;
+        }
+        box_checked.push_back(std::pair<int,int>(i,j));
+    }
+    int i = pos_i;
+    for(int j=pos_j-1;j>=0; j--){
+        if(chessBoard->getPiece(i,j) != NULL){
+            if(chessBoard->getPiece(i,j)->getColor() == color)
+                break;
+            box_checked.push_back(std::pair<int,int>(i,j));
+            break;
+        }
+        box_checked.push_back(std::pair<int,int>(i,j));
+    }
+    i = pos_i;
+    for(int j=pos_j+1;j<=7; j++){
+        if(chessBoard->getPiece(i,j) != NULL){
+            if(chessBoard->getPiece(i,j)->getColor() == color)
+                break;
+            box_checked.push_back(std::pair<int,int>(i,j));
+            break;
+        }
+        box_checked.push_back(std::pair<int,int>(i,j));
+    }
+}
+
+//BISHOP CLASS
+Chess::Bishop::Bishop(int i, int j, Chess::Color color, Chess::Chessboard *chessboard)
+:Piece(i,j,color,chessboard)
+{
+    if(color == WHITE) {
+        texture.loadFromFile("../images/chess_asset_white.png",sf::IntRect(1 * BOX_SIZE,BOX_SIZE,BOX_SIZE,BOX_SIZE));
+    }
+    else if (color == BLACK){
+        texture.loadFromFile("../images/chess_asset.png",sf::IntRect(1*BOX_SIZE,BOX_SIZE,BOX_SIZE,BOX_SIZE));
+    }
+    type = BISHOP;
+    sprite.setTexture(texture);
+}
+
+void Chess::Bishop::findMovement()
+{
+    box_checked.clear();
+    int j = pos_j;
+    for(int i=pos_i-1;i>=0 && j>0; i--){
+        j--;
+        if(chessBoard->getPiece(i,j) != NULL){
+            if(chessBoard->getPiece(i,j)->getColor() == color)
+                break;
+            box_checked.push_back(std::pair<int,int>(i,j));
+            break;
+        }
+        box_checked.push_back(std::pair<int,int>(i,j));
+    }
+    j = pos_j;
+    for(int i=pos_i+1;i<=7 && j<7; i++){
+        j++;
+        if(chessBoard->getPiece(i,j) != NULL){
+            if(chessBoard->getPiece(i,j)->getColor() == color)
+                break;
+            box_checked.push_back(std::pair<int,int>(i,j));
+            break;
+        }
+        box_checked.push_back(std::pair<int,int>(i,j));
+
+    }
+    j = pos_j;
+    for(int i=pos_i-1;i>=0&& j<7; i--){
+        j++;
+        if(chessBoard->getPiece(i,j) != NULL){
+            if(chessBoard->getPiece(i,j)->getColor() == color)
+                break;
+            box_checked.push_back(std::pair<int,int>(i,j));
+            break;
+        }
+        box_checked.push_back(std::pair<int,int>(i,j));
+
+    }
+    j = pos_j;
+    for(int i=pos_i+1;i<=7 && j>0; i++){
+        j--;
+        if(chessBoard->getPiece(i,j) != NULL){
+            if(chessBoard->getPiece(i,j)->getColor() == color)
+                break;
+            box_checked.push_back(std::pair<int,int>(i,j));
+            break;
+        }
+        box_checked.push_back(std::pair<int,int>(i,j));
+    }
+}
+
+//KING CLASS
+Chess::King::King(int i, int j, Chess::Color color, Chess::Chessboard *chessboard)
+:Piece(i,j,color,chessboard)
+{
+    if(color == WHITE) {
+        texture.loadFromFile("../images/chess_asset_white.png",sf::IntRect(2 * BOX_SIZE,0 * BOX_SIZE,BOX_SIZE,BOX_SIZE));
+    }
+    else if (color == BLACK){
+        texture.loadFromFile("../images/chess_asset.png",sf::IntRect(2 * BOX_SIZE,0 * BOX_SIZE,BOX_SIZE,BOX_SIZE));
+    }
+    type = KING;
+    sprite.setTexture(texture);
+}
+
+void Chess::King::findMovement()
+{
+    box_checked.clear();
+    int j = pos_j - 1;
+    for(int i = pos_i - 1;i < pos_i + 2 && j > 0 ; i++){
+        if(i < 0 || i > 7 ||
+            (chessBoard->getPiece(i,j) != NULL && chessBoard->getPiece(i,j)->getColor() == color )) continue;
+        box_checked.push_back(std::pair<int,int>(i,j));
+    }
+
+    j = pos_j;
+    for(int i = pos_i - 1;i < pos_i + 2 ; i++){
+        if(i < 0 || i > 7 ||
+           (chessBoard->getPiece(i,j) != NULL && chessBoard->getPiece(i,j)->getColor() == color )) continue;
+        box_checked.push_back(std::pair<int,int>(i,j));
+    }
+
+    j = pos_j + 1;
+    for(int i = pos_i - 1;i < pos_i + 2 && j < 7; i++){
+        if(i < 0 || i > 7 ||
+           (chessBoard->getPiece(i,j) != NULL && chessBoard->getPiece(i,j)->getColor() == color )) continue;
+        box_checked.push_back(std::pair<int,int>(i,j));
+    }
+}
+
+//QUEEN CLASS
+Chess::Queen::Queen(int i, int j, Chess::Color color, Chess::Chessboard *chessboard)
+:Piece(i,j,color,chessboard)
+{
+    if(color == WHITE) {
+        texture.loadFromFile("../images/chess_asset_white.png",sf::IntRect(3 * BOX_SIZE,0 * BOX_SIZE,BOX_SIZE,BOX_SIZE));
+    }
+    else if (color == BLACK){
+        texture.loadFromFile("../images/chess_asset.png",sf::IntRect(3 * BOX_SIZE,0 * BOX_SIZE,BOX_SIZE,BOX_SIZE));
+    }
+    type = QUEEN;
+    sprite.setTexture(texture);
+}
+
+void Chess::Queen::findMovement()
+{
+    /*** BISHOP SIMULATED ***/
+    box_checked.clear();
+    int j = pos_j;
+    for(int i=pos_i-1;i>=0 && j>0; i--){
+        j--;
+        if(chessBoard->getPiece(i,j) != NULL){
+            if(chessBoard->getPiece(i,j)->getColor() == color)
+                break;
+            box_checked.push_back(std::pair<int,int>(i,j));
+            break;
+        }
+        box_checked.push_back(std::pair<int,int>(i,j));
+    }
+    j = pos_j;
+    for(int i=pos_i+1;i<=7 && j<7; i++){
+        j++;
+        if(chessBoard->getPiece(i,j) != NULL){
+            if(chessBoard->getPiece(i,j)->getColor() == color)
+                break;
+            box_checked.push_back(std::pair<int,int>(i,j));
+            break;
+        }
+        box_checked.push_back(std::pair<int,int>(i,j));
+
+    }
+    j = pos_j;
+    for(int i=pos_i-1;i>=0&& j<7; i--){
+        j++;
+        if(chessBoard->getPiece(i,j) != NULL){
+            if(chessBoard->getPiece(i,j)->getColor() == color)
+                break;
+            box_checked.push_back(std::pair<int,int>(i,j));
+            break;
+        }
+        box_checked.push_back(std::pair<int,int>(i,j));
+
+    }
+    j = pos_j;
+    for(int i=pos_i+1;i<=7 && j>0; i++){
+        j--;
+        if(chessBoard->getPiece(i,j) != NULL){
+            if(chessBoard->getPiece(i,j)->getColor() == color)
+                break;
+            box_checked.push_back(std::pair<int,int>(i,j));
+            break;
+        }
+        box_checked.push_back(std::pair<int,int>(i,j));
+    }
+
+    /*** TOWER SIMULATED ***/
+    j = pos_j;
+    for(int i=pos_i-1;i>=0; i--){
+        if(chessBoard->getPiece(i,j) != NULL){
+            if(chessBoard->getPiece(i,j)->getColor() == color)
+                break;
+            box_checked.push_back(std::pair<int,int>(i,j));
+            break;
+        }
+        box_checked.push_back(std::pair<int,int>(i,j));
+    }
+    j = pos_j;
+    for(int i=pos_i+1;i<=7; i++){
+        if(chessBoard->getPiece(i,j) != NULL){
+            if(chessBoard->getPiece(i,j)->getColor() == color)
+                break;
+            box_checked.push_back(std::pair<int,int>(i,j));
+            break;
+        }
+        box_checked.push_back(std::pair<int,int>(i,j));
+    }
+    int i = pos_i;
+    for(int j=pos_j-1;j>=0; j--){
+        if(chessBoard->getPiece(i,j) != NULL){
+            if(chessBoard->getPiece(i,j)->getColor() == color)
+                break;
+            box_checked.push_back(std::pair<int,int>(i,j));
+            break;
+        }
+        box_checked.push_back(std::pair<int,int>(i,j));
+    }
+    i = pos_i;
+    for(int j=pos_j+1;j<=7; j++){
+        if(chessBoard->getPiece(i,j) != NULL){
+            if(chessBoard->getPiece(i,j)->getColor() == color)
+                break;
+            box_checked.push_back(std::pair<int,int>(i,j));
+            break;
+        }
+        box_checked.push_back(std::pair<int,int>(i,j));
+    }
+}
