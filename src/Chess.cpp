@@ -204,7 +204,7 @@ void Chess::Pawn::findMovement()
         if(chessBoard->getPiece(pos_i - 1 ,pos_j) == NULL)
             box_checked.push_back(std::pair<int,int>(pos_i - 1 ,pos_j));
         if(chessBoard->getPiece(pos_i - 2 ,pos_j) == NULL
-           && pos_i == 6)
+           && chessBoard->getPiece(pos_i - 1 ,pos_j) == NULL && pos_i == 6)
             box_checked.push_back(std::pair<int,int>(pos_i - 2,pos_j));
         if(chessBoard->getPiece(pos_i - 1 ,pos_j - 1) != NULL
            && chessBoard->getPiece(pos_i - 1 ,pos_j - 1)->getColor() != color)
@@ -217,7 +217,7 @@ void Chess::Pawn::findMovement()
         if(chessBoard->getPiece(pos_i + 1 ,pos_j) == NULL)
             box_checked.push_back(std::pair<int,int>(pos_i + 1 ,pos_j));
         if(chessBoard->getPiece(pos_i + 2 ,pos_j) == NULL
-           && pos_i == 1)
+           && chessBoard->getPiece(pos_i + 1 ,pos_j) == NULL && pos_i == 1)
             box_checked.push_back(std::pair<int,int>(pos_i + 2,pos_j));
         if(chessBoard->getPiece(pos_i + 1 ,pos_j + 1) != NULL
            && chessBoard->getPiece(pos_i + 1 ,pos_j + 1)->getColor() != color)
