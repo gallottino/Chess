@@ -1,8 +1,8 @@
 # Chess
-Chess game written in C++
+Chess game written in C++ with SFML libraries. All the asset is drawn by myself in pixel Art.
 
 ## Overview
-![Cattura](https://user-images.githubusercontent.com/33552039/57639829-0e3c3a00-75b1-11e9-9fd5-90d20280f4b5.PNG)
+![Chess](https://user-images.githubusercontent.com/33552039/58384943-af7fb300-7fe9-11e9-93e6-1957660417ec.PNG)
 
 ## Usefull links
 
