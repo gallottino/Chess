@@ -41,12 +41,22 @@ namespace Chess {
     class Chessboard {
     public:
         Chessboard();
+
         Piece* getPiece(int i, int j){return chessboard[i][j];}
+
         void render(sf::RenderWindow *window);
+
         void update(const sf::RenderWindow &window);
+
+        bool kingCheck(int old_pos_i,int old_pos_j, int pos_i, int pos_j);
+
+        bool kingCheck();
+
+
     private:
         Chess::Color turn;
-        Chess::Piece* chessboard[8][8];
+        Chess::Piece* chessboard[8][8],*chessboard_tmp[8][8];
+        Chess::Piece* black_king, *white_king;
 
         sf::Texture black_box,white_box,selected_texture;
         sf::Sprite chessboard_sprite[8][8],selected_icon;
@@ -55,6 +65,7 @@ namespace Chess {
 
         bool selected;
         int selected_i,selected_j;
+
     };
 
     class Piece {
@@ -69,6 +80,8 @@ namespace Chess {
         Type getType() ;
         Color getColor();
 
+        int pos_i,pos_j;
+
     protected:
         sf::Texture texture;
         sf::Sprite sprite;
@@ -78,8 +91,6 @@ namespace Chess {
         Chessboard* chessBoard;
 
         std::list<std::pair<int,int>> box_checked;
-
-        int pos_i,pos_j;
     };
 
     class Pawn : public Piece {
