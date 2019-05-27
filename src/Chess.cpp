@@ -74,6 +74,7 @@ void Chess::Chessboard::render(sf::RenderWindow* window)
             window->draw(chessboard_sprite[i][j]);
         }
     }
+
     for(int i = 0; i < 8 ; i++) {
         for (int j = 0; j < 8; j++) {
             if(chessboard[i][j] != NULL)
@@ -96,7 +97,6 @@ void Chess::Chessboard::render(sf::RenderWindow* window)
 
 void Chess::Chessboard::update(const sf::RenderWindow &window)
 {
-
     animation.update();
     if( !selected && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)
         && sf::Mouse::getPosition(window).x >= CHESSBOARD_ORIGIN_X
@@ -130,8 +130,9 @@ void Chess::Chessboard::update(const sf::RenderWindow &window)
                 animation.setPosition(now_i,now_j);
                 animation.startAnimation(Animation::Type::MOVE);
             }
-            chessboard[now_i][now_j] = chessboard[selected_i][selected_j];
-            chessboard[selected_i][selected_j] = NULL;
+            chessboard_tmp[now_i][now_j] = chessboard[now_i][now_j] = chessboard[selected_i][selected_j];
+
+            chessboard_tmp[selected_i][selected_j] = chessboard[selected_i][selected_j] = NULL;
 
             if(turn == WHITE) turn = BLACK;
             else turn = WHITE;
@@ -173,61 +174,78 @@ bool Chess::Chessboard::kingCheck() {
     if (turn == WHITE) king = white_king;
     else king = black_king;
 
-    /*
     //TODO: ADD CHECK KING
+    bool stop_tower = false;
+    bool stop_bishop = false;
     int j = king->pos_j-1;
     for(int i=king->pos_i-1; i>=0; i--){
         Piece *piece = chessboard_tmp[i][king->pos_j];
-        if (piece != NULL && piece->getColor() != turn
-        && (piece->getType() == TOWER || piece->getType() == QUEEN) ) return true;
+        if(!stop_tower && piece != NULL && piece->getColor() != turn
+           && (piece->getType() == TOWER || piece->getType() == QUEEN) ) return true;
+        if(piece != NULL ) stop_tower = true;
+
 
         if(j<0) continue;
         piece = chessboard_tmp[i][j];
-        if (piece != NULL && piece->getColor() != turn
-        && (piece->getType() == BISHOP ||piece->getType() == QUEEN) ) return true;
+        if(!stop_bishop && piece != NULL && piece->getColor() != turn
+           && (piece->getType() == BISHOP ||piece->getType() == QUEEN) ) return true;
+        if(piece != NULL )  stop_bishop = true;
+
         j--;
     }
 
-
+    stop_tower = false;
+    stop_bishop = false;
     int i = king->pos_i-1;
     for(int j=king->pos_j+1; j<=7 ; j++){
         Piece* piece = chessboard_tmp[king->pos_i][j];
-        if(piece != NULL && piece->getColor()!= turn
-        && (piece->getType() == TOWER || piece->getType() == QUEEN) ) return true;
+        if(!stop_tower && piece != NULL && piece->getColor() != turn
+           && (piece->getType() == TOWER || piece->getType() == QUEEN) ) return true;
+        if(piece != NULL ) stop_tower = true;
 
         if(i<0) continue;
         piece = chessboard_tmp[i][j];
-        if(piece != NULL && piece->getColor()!= turn
-        && (piece->getType() == BISHOP || piece->getType() == QUEEN) ) return true;
+        if(!stop_bishop && piece != NULL && piece->getColor() != turn
+           && (piece->getType() == BISHOP ||piece->getType() == QUEEN) ) return true;
+        if(piece != NULL )  stop_bishop = true;
         i--;
     }
 
+
+    stop_tower = false;
+    stop_bishop = false;
     j = king->pos_j+1;
     for(int i=king->pos_i+1; i<=7; i++){
         Piece *piece = chessboard_tmp[i][king->pos_j];
-        if (piece != NULL && piece->getColor() != turn
-        && (piece->getType() == TOWER || piece->getType() == QUEEN) ) return true;
+        if(!stop_tower && piece != NULL && piece->getColor() != turn
+           && (piece->getType() == TOWER || piece->getType() == QUEEN) ) return true;
+        if(piece != NULL ) stop_tower = true;
 
         if(j>7) continue;
         piece = chessboard_tmp[i][j];
-        if (piece != NULL && piece->getColor() != turn
-        && (piece->getType() == BISHOP || piece->getType() == QUEEN) ) return true;
+        if(!stop_bishop && piece != NULL && piece->getColor() != turn
+           && (piece->getType() == BISHOP ||piece->getType() == QUEEN) ) return true;
+        if(piece != NULL )  stop_bishop = true;
         j++;
     }
 
+    stop_tower = false;
+    stop_bishop = false;
     i = king->pos_i+1;
-    for(int j=king->pos_j-1; j<=7 ; j--){
+    for(int j=king->pos_j-1; j>=0 ; j--){
         Piece* piece = chessboard_tmp[king->pos_i][j];
-        if(piece != NULL && piece->getColor()!= turn
-        && (piece->getType() == TOWER || piece->getType() == QUEEN) ) return true;
+        if(!stop_tower && piece != NULL && piece->getColor() != turn
+           && (piece->getType() == TOWER || piece->getType() == QUEEN) ) return true;
+        if(piece != NULL ) stop_tower = true;
 
         if(i>7) continue;
         piece = chessboard_tmp[i][j];
-        if(piece != NULL && piece->getColor()!= turn
-        && (piece->getType() == BISHOP || piece->getType() == QUEEN) ) return true;
+        if(!stop_bishop && piece != NULL && piece->getColor() != turn
+           && (piece->getType() == BISHOP ||piece->getType() == QUEEN) ) return true;
+        if(piece != NULL )  stop_bishop = true;
         i++;
     }
-    */
+
     return false;
 }
 
@@ -316,8 +334,9 @@ void Chess::Pawn::findMovement()
     }
 
     for(std::pair<int,int> p : box_checked){
-        if(chessBoard->kingCheck(pos_i,pos_j,p.first,p.second))
-            box_checked.pop_back();
+        if(chessBoard->kingCheck(pos_i,pos_j,p.first,p.second)){
+            box_checked.remove(p);
+        }
     }
 }
 
@@ -385,9 +404,10 @@ void Chess::Knight::findMovement() {
           ||( chessBoard->getPiece(i,j)!=NULL && chessBoard->getPiece(i,j)->getColor() != color)))
         box_checked.push_back(std::pair<int,int>(i,j));
 
-    for(std::pair<int,int> p : box_checked) {
-        if(chessBoard->kingCheck(pos_i, pos_j, p.first, p.second))
-            box_checked.pop_back();
+    for(std::pair<int,int> p : box_checked){
+        if(chessBoard->kingCheck(pos_i,pos_j,p.first,p.second)){
+            box_checked.remove(p);
+        }
     }
 }
 
@@ -449,9 +469,10 @@ void Chess::Tower::findMovement()
         box_checked.push_back(std::pair<int,int>(i,j));
     }
 
-    for(std::pair<int,int> p : box_checked) {
-        if(chessBoard->kingCheck(pos_i, pos_j, p.first, p.second))
-            box_checked.pop_back();
+    for(std::pair<int,int> p : box_checked){
+        if(chessBoard->kingCheck(pos_i,pos_j,p.first,p.second)){
+            box_checked.remove(p);
+        }
     }
 }
 
@@ -519,9 +540,10 @@ void Chess::Bishop::findMovement()
         box_checked.push_back(std::pair<int,int>(i,j));
     }
 
-    for(std::pair<int,int> p : box_checked) {
-        if(chessBoard->kingCheck(pos_i, pos_j, p.first, p.second))
-            box_checked.pop_back();
+    for(std::pair<int,int> p : box_checked){
+        if(chessBoard->kingCheck(pos_i,pos_j,p.first,p.second)){
+            box_checked.remove(p);
+        }
     }
 }
 
@@ -563,9 +585,10 @@ void Chess::King::findMovement()
         box_checked.push_back(std::pair<int,int>(i,j));
     }
 
-    for(std::pair<int,int> p : box_checked) {
-        if(chessBoard->kingCheck(pos_i, pos_j, p.first, p.second))
-            box_checked.pop_back();
+    for(std::pair<int,int> p : box_checked){
+        if(chessBoard->kingCheck(pos_i,pos_j,p.first,p.second)){
+            box_checked.remove(p);
+        }
     }
 }
 
@@ -676,8 +699,9 @@ void Chess::Queen::findMovement()
         box_checked.push_back(std::pair<int,int>(i,j));
     }
 
-    for(std::pair<int,int> p : box_checked) {
-        if(chessBoard->kingCheck(pos_i, pos_j, p.first, p.second))
-            box_checked.pop_back();
+    for(std::pair<int,int> p : box_checked){
+        if(chessBoard->kingCheck(pos_i,pos_j,p.first,p.second)){
+            box_checked.remove(p);
+        }
     }
 }
